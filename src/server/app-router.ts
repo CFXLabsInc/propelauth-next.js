@@ -86,6 +86,7 @@ export function getNextResponse(request: NextRequest, newAccessToken?: string) {
 }
 
 export type RouteHandlerArgs = {
+    redirectUri?: string
     postLoginRedirectPathFn?: (req: NextRequest) => string
     getDefaultActiveOrgId?: (req: NextRequest, user: UserFromToken) => string | undefined
 }
@@ -102,7 +103,7 @@ export function getRouteHandlers(args?: RouteHandlerArgs) {
     function signupOrLoginHandler(req: NextRequest, isSignup: boolean) {
         const returnToPath = req.nextUrl.searchParams.get('return_to_path')
         const state = randomState()
-        const redirectUri = getRedirectUri()
+        const redirectUri = args?.redirectUri ?? getRedirectUri()
         const sameSite = getSameSiteCookieValue()
 
         const authorizeUrlSearchParams = req.nextUrl.searchParams
@@ -146,7 +147,7 @@ export function getRouteHandlers(args?: RouteHandlerArgs) {
         }
 
         const authUrlOrigin = getAuthUrlOrigin()
-        const redirectUri = getRedirectUri()
+        const redirectUri = args?.redirectUri ?? getRedirectUri()
         const integrationApiKey = getIntegrationApiKey()
         const oauth_token_body = {
             redirect_uri: redirectUri,
